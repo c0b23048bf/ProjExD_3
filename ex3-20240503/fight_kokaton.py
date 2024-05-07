@@ -213,7 +213,7 @@ def main():
                     bomb[hj] = None
                     ex_lst.append(Explosion((n.rct[0], n.rct[1])))
         
-        if len(ex_lst) != 0:
+        if len(ex_lst) != 0: 
             for hh,i in enumerate(ex_lst):
                 if i.life > 0:
                     pass
