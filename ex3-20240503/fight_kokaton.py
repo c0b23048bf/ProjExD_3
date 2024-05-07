@@ -8,7 +8,7 @@ import pygame as pg
 
 WIDTH = 1600  # ゲームウィンドウの幅
 HEIGHT = 900  # ゲームウィンドウの高さ
-NUM_OF_BOMBS = 3 #　爆弾の個数
+NUM_OF_BOMBS = 5 #　爆弾の個数
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -220,10 +220,7 @@ def main():
         for hk,j in enumerate(bomb):
             if j != None:
                 if bird.rct.colliderect(j.rct):
-                    # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
-                    bird.change_img(8, screen)
-                    pg.display.update()
-                    time.sleep(1)
+                    # ゲームオーバー時に，"Game Over"を5秒間表示させる
                     fonto = pg.font.Font(None, 80)
                     txt = fonto.render("Game Over", True, (255, 0, 0))
                     screen.blit(txt, [WIDTH/2-150, HEIGHT/2])
