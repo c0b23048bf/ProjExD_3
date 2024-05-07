@@ -189,12 +189,12 @@ class Score:
     """
     def __init__(self):
         self.fonto = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30,)
-        self.score = 0
-        self.img = self.fonto.render("スコア:" + str(self.score), 0, (0, 0, 255))
+        self.value = 0
+        self.img = self.fonto.render("スコア:" + str(self.value), 0, (0, 0, 255))
         self.xy = [100, HEIGHT-50]
     
     def update(self, screen):
-        self.img1 = self.fonto.render("スコア:" + str(self.score), 0, (0, 0, 255))
+        self.img1 = self.fonto.render("スコア:" + str(self.value), 0, (0, 0, 255))
         screen.blit(self.img1, self.xy)
         
 
@@ -254,7 +254,7 @@ def main():
                             bird.change_img(6, screen)
                             beam_lst[hf] = None 
                             bomb[hj] = None
-                            score.score += 1
+                            score.value += 1
                             ex_lst.append(Explosion((n.rct[0], n.rct[1])))
         
         #爆発の描画
@@ -285,7 +285,7 @@ def main():
                 m.update(screen)
         
         #全ての爆弾を除去した時にご褒美こうたを表示
-        if NUM_OF_BOMBS == score.score:
+        if NUM_OF_BOMBS == score.value:
             kota.update(screen)
         
         #score,birdをupdate
