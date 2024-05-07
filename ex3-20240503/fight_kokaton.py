@@ -138,7 +138,7 @@ class Beam:
         self.a = math.degrees(math.atan2(-self.vy, self.vx))
         self.img = pg.transform.rotozoom(__class__.beam_img, self.a, 1.0)
         self.rct: pg.Rect = self.img.get_rect()
-        self.rct.left = bird.rct.right + 
+        self.rct.left = bird.rct.right
         self.rct.centery = bird.rct.centery
 
     def update(self, screen: pg.Surface):
