@@ -8,7 +8,7 @@ import pygame as pg
 
 WIDTH = 1600  # ゲームウィンドウの幅
 HEIGHT = 900  # ゲームウィンドウの高さ
-NUM_OF_BOMBS = 3
+NUM_OF_BOMBS = 3 #　爆弾の個数
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -87,7 +87,8 @@ class Bird:
         screen.blit(self.img, self.rct)
         if sum_mv != [0, 0]:
             self.dire = sum_mv
-        
+
+
 class Bomb:
     """
     爆弾に関するクラス
@@ -138,8 +139,7 @@ class Beam:
         self.a = math.degrees(math.atan2(-self.vy, self.vx))
         self.img = pg.transform.rotozoom(__class__.beam_img, self.a, 1.0)
         self.rct: pg.Rect = self.img.get_rect()
-        self.rct.left = bird.rct.right
-        self.rct.centery = bird.rct.centery
+        self.rct.center = bird.rct.center[0] + (60*self.vx/5), bird.rct.center[1] + (80*self.vy/5)
 
     def update(self, screen: pg.Surface):
         """
@@ -216,6 +216,7 @@ def main():
                 return
         screen.blit(bg_img, [0, 0])
         
+        #ゲームオーバー時の処理
         for hk,j in enumerate(bomb):
             if j != None:
                 if bird.rct.colliderect(j.rct):
@@ -231,6 +232,7 @@ def main():
                     bomb[hk] = None
                     return
 
+        #爆弾とビームの衝突時の処理
         if len(beam_lst) != 0: 
             for hf, l in enumerate(beam_lst): 
                 for hj,n in enumerate(bomb):
@@ -243,6 +245,7 @@ def main():
                             score.score += 1
                             ex_lst.append(Explosion((n.rct[0], n.rct[1])))
         
+        #爆発の描画
         if len(ex_lst) != 0: 
             for hh,i in enumerate(ex_lst):
                 if i.life > 0:
@@ -250,21 +253,29 @@ def main():
                 else:
                     del ex_lst[hh]
                 i.update(screen)
-                 
+        
+        #スペースキーでビームを生成
         key_lst = pg.key.get_pressed()
         if key_lst[pg.K_SPACE]:
             beam_lst.append(Beam(bird, bird.dire))
+        
+        #Noneでないビームのupdate
         if len(beam_lst) != 0:
             for cc, b in enumerate(beam_lst):
                 if b != None:
                     b.update(screen)
                     if (b.rct.center[0] >= WIDTH or b.rct.center[0] <= 0) or (b.rct.center[1] >= HEIGHT or b.rct.center[1] <= 0):
                         beam_lst[cc] = None
-        bird.update(key_lst, screen)
+        
+        #Noneでない爆弾をupdate
         for m in bomb:
             if m != None:
                 m.update(screen)
+        
+        #score,birdをupdate
         score.update(screen)
+        bird.update(key_lst, screen)
+        
         pg.display.update()
         tmr += 1
         clock.tick(50)
