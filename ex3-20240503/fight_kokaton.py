@@ -8,7 +8,7 @@ import pygame as pg
 
 WIDTH = 1600  # ゲームウィンドウの幅
 HEIGHT = 900  # ゲームウィンドウの高さ
-NUM_OF_BOMBS = 5 #　爆弾の個数
+NUM_OF_BOMBS = 2 #　爆弾の個数
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -188,7 +188,7 @@ class Score:
     スコア表示に関するクラス
     """
     def __init__(self):
-        self.fonto = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30, )
+        self.fonto = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30,)
         self.score = 0
         self.img = self.fonto.render("スコア:" + str(self.score), 0, (0, 0, 255))
         self.xy = [100, HEIGHT-50]
@@ -198,15 +198,29 @@ class Score:
         screen.blit(self.img1, self.xy)
         
 
+class Kota:
+    """
+    独自機能
+    全ての爆弾を壊した暁には素晴らしいエフェクトを出す
+    """
+    def __init__(self):
+        self.ki = pg.transform.rotozoom(pg.image.load("fig/kota.jpg"), 0, 0.5)
+        self.rct: pg.Rect = self.ki.get_rect()
+        self.rct.center = WIDTH/2, HEIGHT/2
+    
+    def update(self, screen):
+        screen.blit(self.ki, self.rct)
+        
+        
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
     bg_img = pg.image.load("fig/pg_bg.jpg")
     bird = Bird((900, 400))
     bomb = [Bomb() for i in range(NUM_OF_BOMBS)]
-    beam = None
     beam_lst = []
     ex_lst = []
+    kota = Kota()
     score = Score()
     clock = pg.time.Clock()
     tmr = 0
@@ -268,6 +282,10 @@ def main():
         for m in bomb:
             if m != None:
                 m.update(screen)
+        
+        #全ての爆弾を除去した時にご褒美こうたを表示
+        if NUM_OF_BOMBS == score.score:
+            kota.update(screen)
         
         #score,birdをupdate
         score.update(screen)
