@@ -1,3 +1,4 @@
+import math
 import os
 import random
 import sys
@@ -56,6 +57,7 @@ class Bird:
         self.img = __class__.imgs[(+5, 0)]
         self.rct: pg.Rect = self.img.get_rect()
         self.rct.center = xy
+        self.dire = (+5, 0)
 
     def change_img(self, num: int, screen: pg.Surface):
         """
@@ -83,7 +85,8 @@ class Bird:
         if not (sum_mv[0] == 0 and sum_mv[1] == 0):
             self.img = __class__.imgs[tuple(sum_mv)]
         screen.blit(self.img, self.rct)
-        
+        if sum_mv != [0, 0]:
+            self.dire = sum_mv
         
 class Bomb:
     """
@@ -123,18 +126,20 @@ class Beam:
     """
     ビームに関するクラス
     """
-    beam_img = pg.transform.rotozoom(pg.image.load("fig/beam.png"), 180, 2.0)
+    beam_img = pg.transform.rotozoom(pg.image.load("fig/beam.png"), 0, 2.0)
     img = pg.transform.flip(beam_img, True, False)
     
-    def __init__(self, xy: tuple[int, int]):
+    def __init__(self, bird: Bird, dire):
         """
         ビーム画像Surfaceを生成する
         引数 xy：こうかとんの右座標がビームの左座標になるように
         """
-        self.img = __class__.img
+        self.vx,self.vy = dire
+        self.a = math.degrees(math.atan2(-self.vy, self.vx))
+        self.img = pg.transform.rotozoom(__class__.beam_img, self.a, 1.0)
         self.rct: pg.Rect = self.img.get_rect()
-        self.rct.center = xy
-        self.vx,self.vy = +5,0
+        self.rct.left = bird.rct.right + 
+        self.rct.centery = bird.rct.centery
 
     def update(self, screen: pg.Surface):
         """
@@ -177,7 +182,7 @@ class Explosion:
             if self.a >= 10:
                 self.a = 1
             
-
+            
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
@@ -223,7 +228,7 @@ def main():
                  
         key_lst = pg.key.get_pressed()
         if key_lst[pg.K_SPACE]:
-            beam = Beam((bird.rct[0], bird.rct[1]))
+            beam = Beam(bird, bird.dire)
         if beam != None:
             beam.update(screen)
         bird.update(key_lst, screen)
