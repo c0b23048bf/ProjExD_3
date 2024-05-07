@@ -182,7 +182,22 @@ class Explosion:
             if self.a >= 10:
                 self.a = 1
             
-            
+
+class Score:
+    """
+    スコア表示に関するクラス
+    """
+    def __init__(self):
+        self.fonto = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30, )
+        self.score = 0
+        self.img = self.fonto.render("スコア:" + str(self.score), 0, (0, 0, 255))
+        self.xy = [100, HEIGHT-50]
+    
+    def update(self,screen):
+        self.img1 = self.fonto.render("スコア:" + str(self.score), 0, (0, 0, 255))
+        screen.blit(self.img1,self.xy)
+        
+        
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
@@ -191,6 +206,7 @@ def main():
     bomb = [Bomb() for i in range(NUM_OF_BOMBS)]
     beam = None
     ex_lst = []
+    score = Score()
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -206,6 +222,11 @@ def main():
                     bird.change_img(8, screen)
                     pg.display.update()
                     time.sleep(1)
+                    fonto = pg.font.Font(None, 80)
+                    txt = fonto.render("Game Over", True, (255, 0, 0))
+                    screen.blit(txt, [WIDTH/2-150, HEIGHT/2])
+                    pg.display.update()
+                    time.sleep(5)
                     bomb[hk] = None
                     return
                 
@@ -216,6 +237,7 @@ def main():
                     bird.change_img(6, screen)
                     beam = None 
                     bomb[hj] = None
+                    score.score += 1
                     ex_lst.append(Explosion((n.rct[0], n.rct[1])))
         
         if len(ex_lst) != 0: 
@@ -235,6 +257,7 @@ def main():
         for m in bomb:
             if m != None:
                 m.update(screen)
+        score.update(screen)
         pg.display.update()
         tmr += 1
         clock.tick(50)
