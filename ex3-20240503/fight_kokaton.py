@@ -197,7 +197,7 @@ class Score:
         self.img1 = self.fonto.render("スコア:" + str(self.score), 0, (0, 0, 255))
         screen.blit(self.img1,self.xy)
         
-        
+
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
@@ -205,6 +205,7 @@ def main():
     bird = Bird((900, 400))
     bomb = [Bomb() for i in range(NUM_OF_BOMBS)]
     beam = None
+    beam_lst = []
     ex_lst = []
     score = Score()
     clock = pg.time.Clock()
@@ -229,16 +230,18 @@ def main():
                     time.sleep(5)
                     bomb[hk] = None
                     return
-                
-        for hj,n in enumerate(bomb):
-            if (beam != None) and (n != None):
-                if n.rct.colliderect(beam.rct):
-                    # 爆弾とビームの衝突時に爆弾とビームを削除
-                    bird.change_img(6, screen)
-                    beam = None 
-                    bomb[hj] = None
-                    score.score += 1
-                    ex_lst.append(Explosion((n.rct[0], n.rct[1])))
+
+        if len(beam_lst) != 0: 
+            for hf, l in enumerate(beam_lst): 
+                for hj,n in enumerate(bomb):
+                    if (l != None) and (n != None):
+                        if n.rct.colliderect(l.rct):
+                            # 爆弾とビームの衝突時に爆弾とビームを削除
+                            bird.change_img(6, screen)
+                            beam_lst[hf] = None 
+                            bomb[hj] = None
+                            score.score += 1
+                            ex_lst.append(Explosion((n.rct[0], n.rct[1])))
         
         if len(ex_lst) != 0: 
             for hh,i in enumerate(ex_lst):
@@ -250,9 +253,13 @@ def main():
                  
         key_lst = pg.key.get_pressed()
         if key_lst[pg.K_SPACE]:
-            beam = Beam(bird, bird.dire)
-        if beam != None:
-            beam.update(screen)
+            beam_lst.append(Beam(bird, bird.dire))
+        if len(beam_lst) != 0:
+            for cc, b in enumerate(beam_lst):
+                if b != None:
+                    b.update(screen)
+                    if (b.rct.center[0] >= WIDTH or b.rct.center[0] <= 0) or (b.rct.center[1] >= HEIGHT or b.rct.center[1] <= 0):
+                        beam_lst[cc] = None
         bird.update(key_lst, screen)
         for m in bomb:
             if m != None:
