@@ -209,7 +209,7 @@ def main():
                 if n.rct.colliderect(beam.rct):
                     # 爆弾とビームの衝突時に爆弾とビームを削除
                     bird.change_img(6, screen)
-                    beam = None
+                    beam = None 
                     bomb[hj] = None
                     ex_lst.append(Explosion((n.rct[0], n.rct[1])))
         
