@@ -101,7 +101,7 @@ class Bomb:
         引数1 color：爆弾円の色タプル
         引数2 rad：爆弾円の半径
         """
-        self.rad = random.randint(5,10)
+        self.rad = random.randint(5, 10)
         self.img = pg.Surface((2*self.rad, 2*self.rad))
         pg.draw.circle(self.img, random.choice(__class__.color_lst), (self.rad, self.rad), self.rad)
         self.img.set_colorkey((0, 0, 0))
@@ -135,7 +135,7 @@ class Beam:
         ビーム画像Surfaceを生成する
         引数 xy：こうかとんの右座標がビームの左座標になるように
         """
-        self.vx,self.vy = dire
+        self.vx, self.vy = dire
         self.a = math.degrees(math.atan2(-self.vy, self.vx))
         self.img = pg.transform.rotozoom(__class__.beam_img, self.a, 1.0)
         self.rct: pg.Rect = self.img.get_rect()
@@ -193,9 +193,9 @@ class Score:
         self.img = self.fonto.render("スコア:" + str(self.score), 0, (0, 0, 255))
         self.xy = [100, HEIGHT-50]
     
-    def update(self,screen):
+    def update(self, screen):
         self.img1 = self.fonto.render("スコア:" + str(self.score), 0, (0, 0, 255))
-        screen.blit(self.img1,self.xy)
+        screen.blit(self.img1, self.xy)
         
 
 def main():
@@ -235,7 +235,7 @@ def main():
         #爆弾とビームの衝突時の処理
         if len(beam_lst) != 0: 
             for hf, l in enumerate(beam_lst): 
-                for hj,n in enumerate(bomb):
+                for hj, n in enumerate(bomb):
                     if (l != None) and (n != None):
                         if n.rct.colliderect(l.rct):
                             # 爆弾とビームの衝突時に爆弾とビームを削除
@@ -247,7 +247,7 @@ def main():
         
         #爆発の描画
         if len(ex_lst) != 0: 
-            for hh,i in enumerate(ex_lst):
+            for hh, i in enumerate(ex_lst):
                 if i.life > 0:
                     pass
                 else:
