@@ -115,12 +115,44 @@ class Bomb:
         screen.blit(self.img, self.rct)
 
 
+class Beam:
+    """
+    ビームに関するクラス
+    """
+    beam_img = pg.transform.rotozoom(pg.image.load("fig/beam.png"), 180, 2.0)  # デフォルトのこうかとん（右向き）
+    img = pg.transform.flip(beam_img, True, False)
+    
+    def __init__(self, xy: tuple[int, int]):
+        """
+        ビーム画像Surfaceを生成する
+        引数 xy：こうかとんの右座標がビームの左座標になるように
+        """
+        self.img = __class__.img
+        self.rct: pg.Rect = self.img.get_rect()
+        self.rct.center = (xy[0],xy[1])
+        self.vx,self.vy = +5,0
+
+    def update(self, screen: pg.Surface):
+        """
+        ビームをを速度ベクトルself.vx, self.vyに基づき移動させる
+        引数 screen：画面Surface
+        """
+        yoko, tate = check_bound(self.rct)
+        if not yoko:
+            self.vx *= -1
+        if not tate:
+            self.vy *= -1
+        self.rct.move_ip(self.vx, self.vy)
+        screen.blit(self.img, self.rct)
+        
+        
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
     bg_img = pg.image.load("fig/pg_bg.jpg")
     bird = Bird((900, 400))
     bomb = Bomb((255, 0, 0), 10)
+    beam = None
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -137,6 +169,10 @@ def main():
             return
 
         key_lst = pg.key.get_pressed()
+        if key_lst[pg.K_SPACE]:
+            beam = Beam(bird.rct)
+        if beam != None:
+            beam.update(screen)
         bird.update(key_lst, screen)
         bomb.update(screen)
         pg.display.update()
