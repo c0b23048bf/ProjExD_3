@@ -123,7 +123,7 @@ class Beam:
     """
     ビームに関するクラス
     """
-    beam_img = pg.transform.rotozoom(pg.image.load("fig/beam.png"), 180, 2.0)  # デフォルトのこうかとん（右向き）
+    beam_img = pg.transform.rotozoom(pg.image.load("fig/beam.png"), 180, 2.0)
     img = pg.transform.flip(beam_img, True, False)
     
     def __init__(self, xy: tuple[int, int]):
@@ -133,7 +133,7 @@ class Beam:
         """
         self.img = __class__.img
         self.rct: pg.Rect = self.img.get_rect()
-        self.rct.center = (xy[0],xy[1])
+        self.rct.center = xy
         self.vx,self.vy = +5,0
 
     def update(self, screen: pg.Surface):
@@ -149,7 +149,35 @@ class Beam:
         self.rct.move_ip(self.vx, self.vy)
         screen.blit(self.img, self.rct)
         
-        
+
+class Explosion:
+    """
+    爆発エフェクトに関するクラス
+    """
+    def __init__(self, xy: tuple[int, int]):
+        self.img1 = pg.transform.rotozoom(pg.image.load("fig/explosion.gif"), 0, 2.0)
+        self.img2 = pg.transform.flip(self.img1, True, True)
+        self.rct1: pg.Rect = self.img1.get_rect()
+        self.rct2: pg.Rect = self.img2.get_rect()
+        self.ex_imgs = [self.img1, self.img2]
+        self.ex_rcts = [self.rct1, self.rct2]
+        self.rct1.center = xy
+        self.rct2.center = xy
+        self.life = 50
+        self.a = 1
+    
+    def update(self, screen: pg.Surface):
+        self.life -= 1
+        if self.life > 0:
+            if self.a >= 5:
+                screen.blit(self.ex_imgs[0], self.ex_rcts[0])
+            else:
+                screen.blit(self.ex_imgs[1], self.ex_rcts[1])
+            self.a += 1
+            if self.a >= 10:
+                self.a = 1
+            
+
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
@@ -157,6 +185,7 @@ def main():
     bird = Bird((900, 400))
     bomb = [Bomb() for i in range(NUM_OF_BOMBS)]
     beam = None
+    ex_lst = []
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -182,10 +211,19 @@ def main():
                     bird.change_img(6, screen)
                     beam = None
                     bomb[hj] = None
-                    
+                    ex_lst.append(Explosion((n.rct[0], n.rct[1])))
+        
+        if len(ex_lst) != 0:
+            for hh,i in enumerate(ex_lst):
+                if i.life > 0:
+                    pass
+                else:
+                    del ex_lst[hh]
+                i.update(screen)
+                 
         key_lst = pg.key.get_pressed()
         if key_lst[pg.K_SPACE]:
-            beam = Beam(bird.rct)
+            beam = Beam((bird.rct[0], bird.rct[1]))
         if beam != None:
             beam.update(screen)
         bird.update(key_lst, screen)
